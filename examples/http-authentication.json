@@ -1,0 +1,20 @@
+{
+  "allow_wp_auth": true,
+  "auth_label": "HTTP authentication",
+  "login_uri": "https://wordpress.example.com/wp-login.php",
+  "logout_uri": "https://wordpress.example.com/wp-login.php?action=logout",
+  "additional_server_keys": "",
+  "auto_create_user": true,
+  "auto_create_email_domain": "example.com",
+  "allow_ldap": true,
+  "ldap_version": 3,
+  "ldap_protocol": "ldaps",
+  "ldap_server": "ldap.example.com",
+  "ldap_port": 636,
+  "ldap_search_base": "dc=example",
+  "ldap_group_dn": "ou=Security,ou=Groups,dc=bfh",
+  "ldap_admin_group": "example-admin-group",
+  "ldap_editor_group": "",
+  "ldap_author_group": "example-author-group",
+  "db_version": 2
+}
