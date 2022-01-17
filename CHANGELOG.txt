@@ -1,0 +1,10 @@
+2022-01-10	Katharina Drexel <katharina.drexel@bfh.ch>
+
+	* Releasing version 4.6.
+
+	[Katharina Drexel]
+	* Adding original version (https://wordpress.org/plugins/http-authentication/).
+	* Adding license, license header and README.
+	* Adding changes for php>=7.0
+	* Adding LDAP group role mapping.
+	* Adding screenshot with LDAP examples.
