@@ -1,6 +1,7 @@
 <?php
 
-/* Copyright (C) 2011-2012 Daniel Westermann-Clark <daniel@danieltwc.com>
+/*
+Copyright (C) 2011-2012 Daniel Westermann-Clark <daniel@danieltwc.com>
 Copyright (C) 2022 Katharina Drexel <katharina.drexel@bfh.ch>
 
 SPDX-License-Identifier: GPL-2.0+
@@ -52,6 +53,20 @@ class HTTPAuthenticationOptionsPage {
 		add_settings_field('http_authentication_additional_server_keys', '$_SERVER variables', array($this, '_display_option_additional_server_keys'), $this->page, $section, array('label_for' => 'http_authentication_additional_server_keys'));
 		add_settings_field('http_authentication_auto_create_user', 'Automatically create accounts?', array($this, '_display_option_auto_create_user'), $this->page, $section, array('label_for' => 'http_authentication_auto_create_user'));
 		add_settings_field('http_authentication_auto_create_email_domain', 'Email address domain', array($this, '_display_option_auto_create_email_domain'), $this->page, $section, array('label_for' => 'http_authentication_auto_create_email_domain'));
+		$section2 = 'ldap_authentication_main';
+		add_settings_section($section2, 'LDAP Options', array($this, '_display_ldap_options_section'), $this->page);
+		add_settings_field('http_authentication_allow_ldap', 'Activate LDAP group-role mapping?', array($this, '_display_option_allow_ldap'), $this->page, $section2, array('label_for' => 'http_authentication_allow_ldap'));
+		add_settings_field('http_authentication_ldap_protocol', 'LDAP protocol (usually ldap or ldaps)', array($this, '_display_option_ldap_protocol'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_protocol'));
+		add_settings_field('http_authentication_ldap_server', 'LDAP server (FQDN)', array($this, '_display_option_ldap_server'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_server'));
+		add_settings_field('http_authentication_ldap_port', 'LDAP port', array($this, '_display_option_ldap_port'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_port'));
+		add_settings_field('http_authentication_ldap_version', 'LDAP version', array($this, '_display_option_ldap_version'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_version'));
+		add_settings_field('http_authentication_ldap_user', 'LDAP user', array($this, '_display_option_ldap_user'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_user'));
+		add_settings_field('http_authentication_ldap_password', 'LDAP password', array($this, '_display_option_ldap_password'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_password'));
+		add_settings_field('http_authentication_ldap_search_base', 'LDAP search base', array($this, '_display_option_ldap_search_base'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_search_base'));
+		add_settings_field('http_authentication_ldap_group_dn', 'LDAP group DN', array($this, '_display_option_ldap_group_dn'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_group_dn'));
+		add_settings_field('http_authentication_ldap_admin_group', 'LDAP administrator group', array($this, '_display_option_ldap_admin_group'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_admin_group'));
+		add_settings_field('http_authentication_ldap_editor_group', 'LDAP editor group', array($this, '_display_option_ldap_editor_group'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_editor_group'));
+		add_settings_field('http_authentication_ldap_author_group', 'LDAP author group', array($this, '_display_option_ldap_author_group'), $this->page, $section2, array('label_for' => 'http_authentication_ldap_author_group'));
 	}
 
 	/*
@@ -61,6 +76,7 @@ class HTTPAuthenticationOptionsPage {
 		$output = $input;
 		$output['db_version'] = $this->plugin->db_version;
 		$output['allow_wp_auth'] = isset($input['allow_wp_auth']) ? (bool) $input['allow_wp_auth'] : false;
+		$output['allow_ldap'] = isset($input['allow_ldap']) ? (bool) $input['allow_ldap'] : false;
 		$output['auto_create_user'] = isset($input['auto_create_user']) ? (bool) $input['auto_create_user'] : false;
 
 		return $output;
@@ -107,6 +123,14 @@ class HTTPAuthenticationOptionsPage {
 	 * Display explanatory text for the main options section.
 	 */
 	function _display_options_section() {
+	}
+	/*
+	 * Display explanatory text for the ldap options section.
+	 */
+	function _display_ldap_options_section() {
+?>
+Mapping roles to LDAP groups (optional). Works only if the wordpress server can connect to an LDAP server. If no group matches user is put into default role.
+<?php
 	}
 
 	/*
@@ -195,11 +219,155 @@ When a new user logs in, this domain is used for the initial email address on th
 	}
 
 	/*
+	 * Display the LDAP mapping checkbox.
+	 */
+	function _display_option_allow_ldap() {
+		$allow_ldap = $this->options['allow_ldap'];
+		$this->_display_checkbox_field('allow_ldap', $allow_ldap);
+?>
+Activate ldap group to role mapping?
+<?php
+		if ($allow_ldap ) {
+			echo '<br /><strong>Hint:</strong> You must set at least the LDAP server and define one group.';
+		}
+	}
+
+	/*
+	 * Display the LDAP protocol field
+	 */
+	function _display_option_ldap_protocol() {
+		$ldap_protocol = $this->options['ldap_protocol'];
+		$this->_display_input_text_field('ldap_protocol', $ldap_protocol);
+?>
+Default is <code>ldaps</code>; use <code>ldap</code> when the server has no encryption.
+<?php
+	}
+
+	/*
+	 * Display the LDAP server field
+	 */
+	function _display_option_ldap_server() {
+		$ldap_server = $this->options['ldap_server'];
+		$this->_display_input_text_field('ldap_server', $ldap_server);
+?>
+Fully qualified LDAP server name (e.g. ldap.example.com)
+<?php
+	}
+
+	/*
+	 * Display the LDAP server field
+	 */
+	function _display_option_ldap_port() {
+		$ldap_port = $this->options['ldap_port'];
+		$this->_display_input_text_field('ldap_port', $ldap_port);
+?>
+LDAP port, usually 389 or 636
+<?php
+	}
+
+	/*
+	 * Display the LDAP version field
+	 */
+	function _display_option_ldap_version() {
+		$ldap_version = $this->options['ldap_version'];
+		$this->_display_input_text_field('ldap_version', $ldap_version);
+?>
+LDAP version, mostly you can leave it at 3.
+<?php
+	}
+
+	/*
+	 * Display the LDAP user field
+	 */
+	function _display_option_ldap_user() {
+		$ldap_user = $this->options['ldap_user'];
+		$this->_display_input_text_field('ldap_user', $ldap_user);
+?>
+User for LDAP bind, leave empty for anonymous bind.
+<?php
+	}
+
+	/*
+	 * Display the LDAP password field
+	 */
+	function _display_option_ldap_password() {
+		$ldap_password = $this->options['ldap_password'];
+		$this->_display_input_password_field('ldap_password', $ldap_password);
+?>
+Password for LDAP user, leave empty for anonymous bind.
+<?php
+	}
+
+	/*
+	 * Display the LDAP search base field
+	 */
+	function _display_option_ldap_search_base() {
+		$ldap_search_base = $this->options['ldap_search_base'];
+		$this->_display_input_text_field('ldap_search_base', $ldap_search_base);
+?>
+LDAP search base
+<?php
+	}
+
+	/*
+	 * Display the LDAP group dn field
+	 */
+	function _display_option_ldap_group_dn() {
+		$ldap_group_dn = $this->options['ldap_group_dn'];
+		$this->_display_input_text_field('ldap_group_dn', $ldap_group_dn);
+?>
+LDAP group DN. Will be concatenated with LDAP groups below (can be left empty when you want to use LDAP groups from different trees; in that case you have to enter the full path within each ldap group field).
+<?php
+	}
+
+	/*
+	 * Display the LDAP admin group field
+	 */
+	function _display_option_ldap_admin_group() {
+		$ldap_admin_group = $this->options['ldap_admin_group'];
+		$this->_display_input_text_field('ldap_admin_group', $ldap_admin_group);
+?>
+LDAP group which should be mapped to the role 'administrator'. Can be full LDAP tree or only cn (if LDAP group field is set). Leave empty when you don't want that role.
+<?php
+	}
+
+	/*
+	 * Display the LDAP editor group field
+	 */
+	function _display_option_ldap_editor_group() {
+		$ldap_editor_group = $this->options['ldap_editor_group'];
+		$this->_display_input_text_field('ldap_editor_group', $ldap_editor_group);
+?>
+LDAP group which should be mapped to the role 'editor' (leave empty when you don't want that role).
+<?php
+	}
+
+	/*
+	 * Display the LDAP author group field
+	 */
+	function _display_option_ldap_author_group() {
+		$ldap_author_group = $this->options['ldap_author_group'];
+		$this->_display_input_text_field('ldap_author_group', $ldap_author_group);
+?>
+LDAP group which should be mapped to the role 'author' (leave empty when you don't want that role).
+<?php
+	}
+
+	/*
 	 * Display a text input field.
 	 */
 	function _display_input_text_field($name, $value, $size = 75) {
 ?>
 <input type="text" name="<?php echo htmlspecialchars($this->group); ?>[<?php echo htmlspecialchars($name); ?>]" id="http_authentication_<?php echo htmlspecialchars($name); ?>" value="<?php echo htmlspecialchars($value) ?>" size="<?php echo htmlspecialchars($size); ?>" /><br />
+<?php
+	}
+
+	/*
+	 * Display a password input field.
+	 */
+	function _display_input_password_field($name, $value, $size = 75) {
+?>
+<input type="password" name="<?php echo htmlspecialchars($this->group); ?>[<?php echo htmlspecialchars($name); ?>]" id="http_authentication_<?php echo htmlspecialchars($name); ?>" value="<?php echo htmlspecialchars($value) ?>" size="<?php echo htmlspecialchars($size); ?>" /><br />
 <?php
 	}
 

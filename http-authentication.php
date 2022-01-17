@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: HTTP Authentication
-Version: 4.5
-Plugin URI: http://danieltwc.com/2011/http-authentication-4-0/
-Description: Authenticate users using basic HTTP authentication (<code>REMOTE_USER</code>). This plugin assumes users are externally authenticated, as with <a href="http://www.gatorlink.ufl.edu/">GatorLink</a>.
-Author: Daniel Westermann-Clark
-Author URI: http://danieltwc.com/
+Version: 4.6
+Plugin URI: https://github.com/sunflowerbofh/http-authentication
+Description: Authenticate users using basic HTTP authentication (<code>REMOTE_USER</code>). This plugin assumes users are externally authenticated, as with <a href="http://www.gatorlink.ufl.edu/">GatorLink</a>. Additionally, if using LDAP, put users of certain LDAP groups in corresponding wordpress roles.
+Author: Katharina Drexel
+Author URI: https://github.com/sunflowerbofh
 */
 
 /* Copyright (C) 2011-2012 Daniel Westermann-Clark <daniel@danieltwc.com>
@@ -80,6 +80,18 @@ class HTTPAuthenticationPlugin {
 			'additional_server_keys' => '',
 			'auto_create_user' => false,
 			'auto_create_email_domain' => '',
+			'allow_ldap' => false,
+			'ldap_protocol' => 'ldaps',
+			'ldap_server' => 'ldap.example.com',
+			'ldap_port' => '636',
+			'ldap_version' => 3,
+			'ldap_user' => '',
+			'ldap_password' => '',
+			'ldap_search_base' => 'dc=example',
+			'ldap_group_dn' => 'ou=groups,dc=example',
+			'ldap_admin_group' => '',
+			'ldap_editor_group' => '',
+			'ldap_author_group' => '',
 		);
 
 		if ($current_db_version < 1) {
@@ -217,6 +229,76 @@ p#http-authentication-link a {
 		}
 
 		return $user;
+	}
+
+	/*
+	 * Use ldap mapping?
+	 */
+	function allow_ldap() {
+		return (bool) $this->options['allow_ldap'];
+	}
+
+	/*
+	* Set the corresponding role to user
+	 */
+	function group_role_mapping($user) {
+		$ldapuser = $user;
+		echo "<br /> User is " . $ldapuser ."\n";
+
+		$ldap_protocol = $this->options['ldap_protocol'];
+		$ldap_server = $this->options['ldap_server'];
+		$ldap_port = $this->options['ldap_port'];
+		$ldap_version = $this->options['ldap_version'];
+		$ldap_user = $this->options['ldap_user'];
+		$ldap_password = $this->options['ldap_password'];
+		$ldap_search_base = $this->options['ldap_search_base'];
+		$ldap_group_dn = $this->options['ldap_group_dn'];
+		$ldap_admin_group = $this->options['ldap_admin_group'];
+		$ldap_editor_group = $this->options['ldap_editor_group'];
+		$ldap_author_group = $this->options['ldap_author_group'];
+
+		$ldap_uri = $ldap_protocol . "://" . $ldap_server . ':' . $ldap_port;
+		#if (empty($ldap_version)) {
+		#	$ldap_version = 3;
+		#}
+		$ldapconn = ldap_connect($ldap_uri) or wp_die(__('Could not connect to LDAP server.'));
+		ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, $ldap_version);
+		if( $ldapconn ) {
+			if ( empty($ldap_user)) {
+				$ldapbind = ldap_bind( $ldapconn ) or wp_die (__("ERROR trying to bind: " .ldap_error($ldapconn)));
+			} else {
+				$ldapbind = ldap_bind( $ldapconn, $ldap_user, $ldap_password ) or wp_die (__("ERROR trying to bind: " .ldap_error($ldapconn)));
+			}
+
+			if ( $ldapbind ) {
+				$group_roles = array( $ldap_admin_group=>"administrator", $ldap_editor_group=>"editor", $ldap_author_group=>"author" );
+				foreach ( $group_roles as $key=>$value ) {
+					if ( ! empty( $key )) {
+						if ( empty( $ldap_group_dn )) {
+							$filter = "(&(uid=". $ldapuser . ")(memberOf=cn=" . $key . "))";
+						} else {
+							$filter = "(&(uid=". $ldapuser . ")(memberOf=cn=" . $key . "," . $ldap_group_dn . "))";
+						}
+						$result = ldap_search ($ldapconn, $ldap_search_base, $filter) or wp_die (__("ERROR in search query: " .ldap_error($ldapconn)));
+						$data = ldap_get_entries($ldapconn, $result);
+
+						if ( ! empty($data[0]) ) {
+							if ( $data[0]['uid'][0] === $ldapuser ) {
+								$user_role = $value;
+								break;
+							}
+						}
+					}
+				}
+			} else {
+				wp_die(__("LDAP bind failed"));
+			}
+
+		}
+	return $user_role;
+		# if (! $this->allow_ldap()) -> $role = call function($user)
+		# if ! empty($role)
+		# $user->set_role( $role ); (nach $user = new \WP_User( $user_id );)
 	}
 
 	/*
