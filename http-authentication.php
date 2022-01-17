@@ -9,6 +9,7 @@ Author URI: http://danieltwc.com/
 */
 
 /* Copyright (C) 2011-2012 Daniel Westermann-Clark <daniel@danieltwc.com>
+Copyright (C) 2022 Katharina Drexel <katharina.drexel@bfh.ch>
 
 SPDX-License-Identifier: GPL-2.0+
 
@@ -33,7 +34,7 @@ class HTTPAuthenticationPlugin {
 	var $option_name = 'http_authentication_options';
 	var $options;
 
-	function HTTPAuthenticationPlugin() {
+	function __construct() {
 		$this->options = get_option($this->option_name);
 
 		if (is_admin()) {

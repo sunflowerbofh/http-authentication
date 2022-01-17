@@ -1,6 +1,7 @@
 <?php
 
 /* Copyright (C) 2011-2012 Daniel Westermann-Clark <daniel@danieltwc.com>
+Copyright (C) 2022 Katharina Drexel <katharina.drexel@bfh.ch>
 
 SPDX-License-Identifier: GPL-2.0+
 
@@ -25,7 +26,7 @@ class HTTPAuthenticationOptionsPage {
 	var $options;
 	var $title;
 
-	function HTTPAuthenticationOptionsPage($plugin, $group, $page, $options, $title = 'HTTP Authentication') {
+	function __construct($plugin, $group, $page, $options, $title = 'HTTP Authentication') {
 		$this->plugin = $plugin;
 		$this->group = $group;
 		$this->page = $page;
