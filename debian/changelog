@@ -1,0 +1,5 @@
+wordpress-plugin-http-authentication (4.6-1) sid; urgency=low
+
+  * Initial upload to sid (closes: #1003507).
+
+ -- Katharina Drexel <katharina.drexel@bfh.ch>  Mon, 10 Jan 2022 15:22:18 +0100

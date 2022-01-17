@@ -1,0 +1,34 @@
+Source: wordpress-plugin-http-authentication
+Section: web
+Priority: optional
+Maintainer: Katharina Drexel <katharina.drexel@bfh.ch>
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-apache2,
+Rules-Requires-Root: no
+Standards-Version: 4.5.1
+Homepage: https://github.com/sunflowerbofh/http-authentication
+Vcs-Browser: https://github.com/sunflowerbofh/http-authentication
+Vcs-Git: https://github.com/sunflowerbofh/http-authentication
+
+Package: wordpress-plugin-http-authentication
+Section: web
+Architecture: all
+Depends:
+ wordpress,
+ ${misc:Depends},
+Recommends:
+ php-ldap,
+Description: weblog manager (HTTP Authentication Plugin)
+ WordPress is a full featured web blogging tool:
+    * Instant publishing (no rebuilding)
+    * Comment pingback support with spam protection
+    * Non-crufty URLs
+    * Themable
+    * Plugin support
+ .
+ This package contains the plugin for HTTP Authentication, allowing to use
+ existing means of authenticating people to WordPress. This includes Apache's
+ basic HTTP authentication module, Shibboleth, and many others.
+ Additionally you can configure an LDAP section where LDAP groups can be mapped
+ to WordPress roles.
