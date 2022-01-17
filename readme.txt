@@ -1,38 +1,22 @@
 === HTTP Authentication ===
-Contributors: dwc
-Tags: authentication
-Requires at least: 3.1
-Tested up to: 3.4
-Stable tag: 4.5
+Contributors: sunflower99, dwc
+Tags: authentication, ldap
+Requires at least: 5.8
+Tested up to: 5.8.2
+Stable tag: 4.6
 
 Use an external authentication source in WordPress.
-
-== Description ==
-
-The HTTP Authentication plugin allows you to use existing means of authenticating people to WordPress. This includes Apache's basic HTTP authentication module, [Shibboleth](http://shibboleth.internet2.edu/), and many others.
-
-To follow updates to this plugin, visit:
-
-http://danieltwc.com/
-
-For help with this version, visit:
-
-http://danieltwc.com/2011/http-authentication-4-0/
+Put user into wordpress role depending on LDAP group immediately after login.
 
 == Installation ==
 
 1. Login as an existing user, such as admin.
 2. Upload the `http-authentication` folder to your plugins folder, usually `wp-content/plugins`. (Or simply via the built-in installer.)
 3. Activate the plugin on the Plugins screen.
-4. Add one or more users to WordPress, specifying the external username for the "Username" field. Also be sure to set the role for each user.
+4. Add one or more LDAP groups that should get the role administrator, editor or author (optional).
 5. Logout.
 6. Protect `wp-login.php` and `wp-admin` using your external authentication (using, for example, `.htaccess` files).
-7. Try logging in as one of the users added in step 4.
-
-Note: This version works with WordPress 3.0 and above. Use the following for older versions of WordPress:
-
-* Wordpress 2.0: [Version 1.8](http://downloads.wordpress.org/plugin/http-authentication.1.8.zip)
-* Wordpress 2.5 through 2.9.x: [Version 2.4](http://downloads.wordpress.org/plugin/http-authentication.2.4.zip)
+7. Try logging in as one of the users added via LDAP or .htaccess.
 
 == Frequently Asked Questions ==
 
@@ -80,9 +64,11 @@ Because this plugin generates a random password when you create a new user or ed
 
 Also, you should leave the `admin` user as a fallback, i.e. create a new account to use with this plugin. As long as you don't edit the `admin` profile, WordPress will store the password set when you installed WordPress.
 
-In the worst case scenario, you may have to use phpMyAdmin or the MySQL command line to [reset a user's password](http://codex.wordpress.org/Resetting_Your_Password).
+In the worst case scenario, you may have to use phpMyAdmin or the MySQL command line to [reset a user's password](https://wordpress.org/support/article/resetting-your-password/).
 
 = Can I configure the plugin to support standard WordPress logins? =
+
+(The following has not been tested. It has been taken over from the original [http-authentication](https://wordpress.org/plugins/http-authentication/).)
 
 Yes. You can authenticate some users via an external, single sign-on system and other users via the built-in username and password combination. (Note: When mixed authentication is in use, this plugin does not scramble passwords as described above.)
 
@@ -112,9 +98,16 @@ Yes, you can enable this plugin across a network or on individual sites. However
 
 If you have suggestions on how to improve network support, please submit a comment.
 
+= Does this plugin support multisite (WordPress MU) setups? =
+
+Yes, you can enable this plugin across a network or on individual sites. However, options will need to be set on individual sites.
+
+If you have suggestions on how to improve network support, please submit a comment.
+
 = How do you handle staged deployments (dev, test, prod) with the plugin? =
 
-If you have a WordPress site with multiple environments (e.g. `dev.example.com`, `test.example.com`, and `example.com`) you can use additional variables in the login and logout URIs:
+If you have a WordPress site with multiple environments (e.g. `dev.example.com`, `test.example.com`, and `example.com`) you can use additional variables in the login and lo
+gout URIs:
 
 * `%host%` - The current value of `$_SERVER['HTTP_HOST']`
 * `%base%` - The base domain URL (everything before the path)
@@ -133,70 +126,8 @@ This would be modified for each environment as appropriate.
 
 1. Plugin options, allowing WordPress authentication
 2. WordPress login form with external authentication link
+3. LDAP server and group configuration
 
 == Changelog ==
 
-= 4.5 =
-* Avoid some PHP notices due to saving options (William Schneider)
-* Fix for redirect loop on some multisite setups (#1497)
-* Add option to support additional $_SERVER variables in authentication (#1477)
-* Remove use of call-time pass by reference to avoid warnings on PHP 5.3 and newer
-* Fix deprecation notice in WordPress 3.3 on `get_userdatabylogin` (#1513)
-* Fix deprecation notice in WordPress 3.1 and later for including wp-includes/registration.php
-* Associate options page label tags with their input fields (#1514)
-
-= 4.4 =
-* Update CSS to correctly center login button on WordPress 3.3
-
-= 4.3 =
-* Update plugin URIs
-
-= 4.2 =
-* Declare support for WordPress 3.2.1
-* Extend variable replacement for staged deployments
-* Wrap redirect parameter on login to force us through `wp-login.php` so we can check the external authentication (thanks to Josh Larios)
-
-= 4.1 =
-* Declare support for WordPress 3.2
-* Update screenshots for WordPress 3.2
-
-= 4.0 =
-* Restore (and improve) support for falling back to WordPress password authentication
-* Remove migration of old options format (we'll assume enough people have upgraded)
-
-= 3.3 =
-* Update options handling to better support WordPress MU
-
-= 3.2 =
-* Restore password generation for adding and editing users
-
-= 3.1 =
-* Bump version number to make 3.0.1 the latest version on wordpress.org
-
-= 3.0.1 =
-* Handle authentication cookies more gracefully
-
-= 3.0 =
-* Add support for WordPress 3.0
-* Update WordPress MU support for WordPress 3.0
-
-= 2.4 =
-* Add support for WordPress MU (Elliot Kendall)
-* Allow for mixed HTTP and built-in authentication by falling back to wp-login.php (Elliot Kendall)
-
-== Upgrade Notice ==
-
-= 4.5 =
-Avoid some PHP errors and warnings; add support for choosing $_SERVER variables
-
-= 4.4 =
-Minor CSS fix for WordPress 3.3
-
-= 4.3 =
-No code changes; updating plugin URIs
-
-= 4.2 =
-Extends support for variable replacement
-
-= 4.1 =
-Minor update for WordPress 3.2
+![changelog](CHANGELOG.txt)
