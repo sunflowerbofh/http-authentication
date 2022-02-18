@@ -15,9 +15,10 @@ Package: wordpress-plugin-http-authentication
 Section: web
 Architecture: all
 Depends:
- php-ldap,
  wordpress,
  ${misc:Depends},
+Recommends:
+ php-ldap,
 Description: weblog manager (HTTP Authentication Plugin)
  WordPress is a full featured web blogging tool:
     * Instant publishing (no rebuilding)
