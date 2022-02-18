@@ -1,0 +1,2 @@
+*.php /usr/share/wordpress/wp-content/plugins/http-authentication
+*.png /usr/share/wordpress/wp-content/plugins/http-authentication
