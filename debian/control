@@ -6,7 +6,7 @@ Build-Depends:
  debhelper-compat (= 13),
  dh-apache2,
 Rules-Requires-Root: no
-Standards-Version: 4.5
+Standards-Version: 4.6.0
 Homepage: https://github.com/sunflowerbofh/http-authentication
 Vcs-Browser: https://github.com/sunflowerbofh/http-authentication
 Vcs-Git: https://github.com/sunflowerbofh/http-authentication
