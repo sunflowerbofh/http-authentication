@@ -1,3 +1,9 @@
+wordpress-plugin-http-authentication (4.7-1) sid; urgency=low
+
+  * Unifying license file (according to github user majority).
+
+ -- Katharina Drexel <katharina.drexel@bfh.ch>  Thu, 03 Mar 2022 12:41:41 +0100
+
 wordpress-plugin-http-authentication (4.6-2) sid; urgency=low
 
   * New major standards version.
