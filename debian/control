@@ -12,7 +12,6 @@ Vcs-Browser: https://github.com/sunflowerbofh/http-authentication
 Vcs-Git: https://github.com/sunflowerbofh/http-authentication.git
 
 Package: wordpress-plugin-http-authentication
-Section: web
 Architecture: all
 Depends:
  wordpress,
