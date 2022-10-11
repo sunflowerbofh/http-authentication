@@ -1,6 +1,14 @@
 # http-authentication
 LDAP group - role mapping extension for the WordPress http-authentication plugin
 
+## Hint
+
+This project will not de continued as there is another plugin which also covers
+LDAP functionality.
+(https://github.com/heiglandreas/authLdap
+debian version:
+ https://github.com/sunflowerbofh/authLdap/tree/debian/latest)
+
 ## Description
 
 This is an extension of the existing [http-authentication](https://wordpress.org/plugins/http-authentication) WordPress plugin which is not maintained any more.
